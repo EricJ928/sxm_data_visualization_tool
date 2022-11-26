@@ -16,7 +16,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QFileDialog
 import pyqtgraph as pg
 
-import SXM
+import sxmReader
 
 
 class labellingApp(QtWidgets.QMainWindow):
@@ -104,7 +104,7 @@ class labellingApp(QtWidgets.QMainWindow):
         self.label_errMsg.setText('No Error')
 
     def read_sxm(self, fn):
-        load = SXM.SXM(fn)
+        load = sxmReader.NanonisSXM(fn)
         xx = load.get_channel('Z')
         scan_dir = load.header['SCAN_DIR'][0][0]
         pixels = {'x': int(load.header['SCAN_PIXELS'][0][0]),
