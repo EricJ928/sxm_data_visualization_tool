@@ -1,5 +1,7 @@
 import os
+import struct
 import numpy as np
+import pandas as pd
 
 
 class NanonisSXM():
@@ -19,8 +21,10 @@ class NanonisSXM():
         self.header = {}
         self.size = {}
         self.channels = []
+        self.channels_name = []
         
         self._read_file()
+        self._read_channel_names()
 
     def _read_file(self):
         """
@@ -31,7 +35,7 @@ class NanonisSXM():
             line = ''
             key = ''
             while not header_ended:
-                line = fs.readline()
+                line = fs.readline().rstrip()
                 if line == b':SCANIT_END:':
                     header_ended = True
                 else:
@@ -50,5 +54,46 @@ class NanonisSXM():
                 'y': float(self.header['SCAN_RANGE'][0][1]),
             }
             
-    def _return_channels(self):
-        pass
+    def _read_channel_names(self):
+        self.channels = pd.DataFrame(self.header['DATA_INFO'][1:], 
+                  columns=self.header['DATA_INFO'][0])
+        self.channels_name = self.channels['Name'].to_list()
+    
+    def list_channels(self):
+        print('Available channels:')
+        print(self.channels_name)
+    
+    def retrieve_channel_data(self, channel_name, direction='forward'):
+        """Function for retrieving a specific channel data.
+
+        Args:
+            channel_name (str): Channel name
+            direction (str, optional): Scan direction. Defaults to 'forward'.
+
+        Returns:
+            str: Retrieved data.
+        """
+        channel_pos = 0
+        df = self.channels
+        for i in range(df.shape[0]):
+            if df['Name'][i] == channel_name:
+                if df['Direction'][i] == 'both' and direction == 'backward':
+                    channel_pos += 1
+                if df['Direction'][i] == 'both' or df['Direction'][i] == direction:
+                    break
+                return None
+            elif df['Direction'][i] == 'both':
+                channel_pos += 2
+            else:
+                channel_pos += 1
+        data_per_channel = self.size['pixels']['x'] * self.size['pixels']['y']
+        
+        fhandle = open(self.fname, 'rb')
+        read_all = fhandle.read()
+        offset = read_all.find(b'\x1A\x04')
+        fhandle.seek(offset+2+channel_pos*data_per_channel*4)
+        
+        data = struct.unpack('<>'['MSBFIRST'==self.header['SCANIT_TYPE'][0][1]]+str(data_per_channel)+{'FLOAT':'f','INT':'i','UINT':'I','DOUBLE':'d'}[self.header['SCANIT_TYPE'][0][0]], 
+                             fhandle.read(4*data_per_channel))
+        data = np.array(data).reshape((self.size['pixels']['y'], self.size['pixels']['x']))
+        return data

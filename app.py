@@ -7,7 +7,6 @@ Created on 25-Feb-2022
 import numpy as np
 import os
 import glob
-import cv2
 import shutil
 import sys
 
@@ -19,7 +18,7 @@ import pyqtgraph as pg
 import sxmReader
 
 
-class labellingApp(QtWidgets.QMainWindow):
+class sxmViewerApp(QtWidgets.QMainWindow):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.file_dir = ''
@@ -29,7 +28,7 @@ class labellingApp(QtWidgets.QMainWindow):
         self.log_moved = []
         self.ui = uic.loadUi('ui.ui', self)
         # self.resize(900, 600)
-        self.setWindowTitle('STM Viewer')
+        self.setWindowTitle('SXM Viewer')
 
         fileType = ['.sxm', '.npy']
         colormap = ['viridis', 'plasma', 'inferno', 'magma', 'cividis', 'Greys', 'Purples', 'Blues', 'Greens', 'Oranges',
@@ -105,7 +104,7 @@ class labellingApp(QtWidgets.QMainWindow):
 
     def read_sxm(self, fn):
         load = sxmReader.NanonisSXM(fn)
-        xx = load.get_channel('Z')
+        xx = load.retrieve_channel_data('Z')
         scan_dir = load.header['SCAN_DIR'][0][0]
         pixels = {'x': int(load.header['SCAN_PIXELS'][0][0]),
                   'y': int(load.header['SCAN_PIXELS'][0][1])}
@@ -157,6 +156,6 @@ class labellingApp(QtWidgets.QMainWindow):
 if __name__ == '__main__':
     os.chdir(sys.path[0])
     app = QtWidgets.QApplication(sys.argv)
-    mainWindow = labellingApp()
+    mainWindow = sxmViewerApp()
     mainWindow.show()
     sys.exit(app.exec_())
