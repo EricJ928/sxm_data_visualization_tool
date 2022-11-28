@@ -8,7 +8,8 @@ Compare to the native LabView app from Nanonis, this tool is a lot faster and ca
 ### Functionality
 
 - Load and visualize data from `.sxm` and `.npy` file.
-    - So far it only supports the 'Z' channel.
+    - For `.sxm`, it can extract all the available channels in the file.
+    - For `.npy`, the data type shoud be a 2D (rank-2) numpy array.
 - Subtract a 2D fitted plane from the original image.
 - The default setup includes more than 60 colormaps from matplotlib.
 - Adjust color range, export image and raw data by right-clicking on the image.
