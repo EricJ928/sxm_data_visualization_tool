@@ -20,18 +20,12 @@
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
-      <item row="11" column="0">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+      <item row="13" column="2">
+       <widget class="QLabel" name="label_size">
+        <property name="text">
+         <string>Size:</string>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
+       </widget>
       </item>
       <item row="3" column="3">
        <widget class="QPushButton" name="previousButton">
@@ -52,21 +46,21 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="3">
-       <widget class="QComboBox" name="comboBox_colormap"/>
-      </item>
-      <item row="8" column="3">
-       <spacer name="verticalSpacer">
+      <item row="13" column="0">
+       <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Vertical</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>40</width>
+          <height>20</height>
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="7" column="3">
+       <widget class="QComboBox" name="comboBox_colormap"/>
       </item>
       <item row="0" column="2">
        <widget class="QLineEdit" name="lineEdit_findex">
@@ -89,6 +83,9 @@
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
+      </item>
+      <item row="2" column="0" rowspan="10" colspan="3">
+       <widget class="ImageView" name="graphicsView"/>
       </item>
       <item row="4" column="3">
        <widget class="QPushButton" name="nextButton">
@@ -119,6 +116,19 @@
         </property>
        </widget>
       </item>
+      <item row="10" column="3">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
       <item row="0" column="0">
        <widget class="QComboBox" name="comboBox_fname"/>
       </item>
@@ -141,6 +151,13 @@
         </property>
        </widget>
       </item>
+      <item row="12" column="2">
+       <widget class="QLabel" name="label_pixels">
+        <property name="text">
+         <string>Pixels:</string>
+        </property>
+       </widget>
+      </item>
       <item row="6" column="3">
        <widget class="QLabel" name="label_colormap">
         <property name="text">
@@ -148,32 +165,25 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" rowspan="8" colspan="3">
-       <widget class="ImageView" name="graphicsView"/>
-      </item>
       <item row="0" column="1">
        <widget class="QComboBox" name="comboBox_fileType"/>
       </item>
-      <item row="10" column="0">
+      <item row="12" column="0">
        <widget class="QLabel" name="label_errMsg">
         <property name="text">
          <string>No Error</string>
         </property>
        </widget>
       </item>
-      <item row="10" column="2">
-       <widget class="QLabel" name="label_pixels">
+      <item row="8" column="3">
+       <widget class="QLabel" name="label_channel">
         <property name="text">
-         <string>Pixels:</string>
+         <string>Channel</string>
         </property>
        </widget>
       </item>
-      <item row="11" column="2">
-       <widget class="QLabel" name="label_size">
-        <property name="text">
-         <string>Size:</string>
-        </property>
-       </widget>
+      <item row="9" column="3">
+       <widget class="QComboBox" name="comboBox_channel"/>
       </item>
      </layout>
     </item>
