@@ -26,6 +26,8 @@ class sxmViewerApp(QtWidgets.QMainWindow):
         self.findex = 0
         self.findex_max = 0
         self.log_moved = []
+        self.all_channels = []
+        self.current_channel = ''
         self.ui = uic.loadUi('ui.ui', self)
         # self.resize(900, 600)
         self.setWindowTitle('SXM Viewer')
@@ -55,6 +57,7 @@ class sxmViewerApp(QtWidgets.QMainWindow):
 
         self.comboBox_fileType.activated[str].connect(self.get_fnames)
         self.comboBox_colormap.activated[str].connect(self.set_colormap)
+        self.comboBox_channel.activated[str].connect(lambda: self.update_image(self.fnames[self.findex]))
         self.comboBox_fname.activated[str].connect(self.comboBox_fname_update)
 
     def openFileNameDialog(self):
@@ -90,6 +93,8 @@ class sxmViewerApp(QtWidgets.QMainWindow):
     def update_image(self, fn):
         if self.comboBox_fileType.currentText() == '.npy':
             data = np.load(fn)
+            self.label_pixels.setText('Pixels: {}x{}'.format(data.shape[0], data.shape[1]))
+            self.label_size.setText('Size: None')
         elif self.comboBox_fileType.currentText() == '.sxm':
             data, pixels, real = self.read_sxm(fn)
             self.label_pixels.setText('Pixels: {}x{}'.format(pixels['x'], pixels['y']))
@@ -97,14 +102,24 @@ class sxmViewerApp(QtWidgets.QMainWindow):
 
         if self.checkBox_fitPlane.isChecked():
             data = self.subtract_2d_plane(data)
+            if isinstance(data, str):
+                self.label_errMsg.setText('Error: Image contains nan values.')
+                return
         data *= 1e9
         self.graphicsView.setImage(data.T)
         self.lineEdit_findex.setText('{}/{}'.format(self.findex+1, self.findex_max))
         self.label_errMsg.setText('No Error')
 
     def read_sxm(self, fn):
+        self.current_channel = str(self.comboBox_channel.currentText())
+        self.comboBox_channel.clear()
         load = sxmReader.NanonisSXM(fn)
-        xx = load.retrieve_channel_data('Z')
+        self.comboBox_channel.addItems(load.channels_name)
+        if self.current_channel == '':
+            self.current_channel = load.channels_name[0]
+        self.comboBox_channel.setCurrentText(self.current_channel)
+        
+        xx = load.retrieve_channel_data(self.current_channel)
         scan_dir = load.header['SCAN_DIR'][0][0]
         pixels = {'x': int(load.header['SCAN_PIXELS'][0][0]),
                   'y': int(load.header['SCAN_PIXELS'][0][1])}
@@ -136,6 +151,8 @@ class sxmViewerApp(QtWidgets.QMainWindow):
         self.graphicsView.setColorMap(cmap)
 
     def subtract_2d_plane(self, img):
+        if np.isnan(img).any():
+            return 'contain nan'
         m = img.shape[0]
         X1, X2 = np.mgrid[:m, :m]
 
